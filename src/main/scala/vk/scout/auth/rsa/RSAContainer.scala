@@ -13,7 +13,7 @@ trait RSAContainer {
 }
 
 trait RSAEncryptor extends RSAContainer {
-  val publicKeyBytes: Array[Byte]
+  protected[this] val publicKeyBytes: Array[Byte]
 
   protected[this] def getPublicKey: RSAPublicKey = {
     val publicKeySpec: X509EncodedKeySpec = new X509EncodedKeySpec(publicKeyBytes)
@@ -27,7 +27,7 @@ trait RSAEncryptor extends RSAContainer {
 }
 
 trait RSADecryptor extends RSAContainer {
-  val privateKeyBytes: Array[Byte]
+  protected[this] val privateKeyBytes: Array[Byte]
 
   protected[this] def getPrivateKey: RSAPrivateKey = {
     val spec: PKCS8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes)

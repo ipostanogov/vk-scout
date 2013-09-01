@@ -15,10 +15,10 @@ import javafx.application.Platform
 class AuthBrowser extends WebBrowser {
   m =>
   var authResult: Option[AuthResponse] = None
-  private val lock: AnyRef = new AnyRef
+  private[this] val lock: AnyRef = new AnyRef
   notifyOnClose(lock)
-  var loginPassword: Option[LoginPassword] = None
-  var displayForever = false
+  private[this] var loginPassword: Option[LoginPassword] = None
+  private[this] var displayForever = false
 
   def auth(loginPassword: Option[LoginPassword] = None, displayForever: Boolean) = {
     m.loginPassword = loginPassword
@@ -32,7 +32,7 @@ class AuthBrowser extends WebBrowser {
     authResult
   }
 
-  def reloadEngine() {
+  private[this] def reloadEngine() {
     Platform.runLater(new Runnable {
       def run() {
         if (engine != null && (engine.getDocument == null || engine.getDocument.getDocumentURI == "about:blank"))
@@ -44,7 +44,7 @@ class AuthBrowser extends WebBrowser {
     }
   }
 
-  val pasteLoginPassword: ChangeListener[Document] = new ChangeListener[Document] {
+  private[this] val pasteLoginPassword: ChangeListener[Document] = new ChangeListener[Document] {
     def changed(prop: ObservableValue[_ <: Document], oldDoc: Document, newDoc: Document) {
       if (newDoc == null) return
       loginPassword.map(lp =>
@@ -57,7 +57,7 @@ class AuthBrowser extends WebBrowser {
     }
   }
 
-  val retrieveAccessToken: ChangeListener[Document] = new ChangeListener[Document] {
+  private[this] val retrieveAccessToken: ChangeListener[Document] = new ChangeListener[Document] {
     def jsonFromUrl(doc: Document) = {
       // vk returns link like http://REDIRECT_URI#access_token= 533..6506a3&expires_in=86400&user_id=8492
       // parsing it with URLEncodedUtils fails
@@ -86,7 +86,7 @@ class AuthBrowser extends WebBrowser {
     }
   }
 
-  protected def modifyEngineListeners() {
+  protected[this] def modifyEngineListeners() {
     if (pasteLoginPassword == null || retrieveAccessToken == null || engine == null || loginPassword == null) return
     engine.documentProperty.removeListener(pasteLoginPassword)
     engine.documentProperty.addListener(pasteLoginPassword)

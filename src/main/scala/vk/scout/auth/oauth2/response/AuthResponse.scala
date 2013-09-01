@@ -2,7 +2,7 @@ package vk.scout.auth.oauth2.response
 
 import argonaut._, Argonaut._
 
-sealed class AuthResponse
+sealed trait AuthResponse
 
 case class SuccessAuthData(accessToken: String, userId: String, expiresIn: String) extends AuthResponse
 

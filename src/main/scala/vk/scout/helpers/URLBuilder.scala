@@ -14,7 +14,7 @@ trait URLBuilder {
     encValue = java.net.URLEncoder.encode(plainValue.get, "utf8")
   } yield s"$key=$encValue").mkString("&")
 
-  def getUrl = pageUrl + "?" + paramsStr
+  final def getUrl = pageUrl + "?" + paramsStr
 }
 
 trait URLConnector extends URLBuilder {

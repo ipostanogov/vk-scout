@@ -7,8 +7,8 @@ trait RSATool extends RSAEncryptor with RSADecryptor
 trait RSAToolFromFile extends RSATool with BytesReader {
   protected[this] val publicKeyFileName: String
   protected[this] val privateKeyFileName: String
-  lazy val publicKeyBytes: Array[Byte] = readFromFile(publicKeyFileName)
-  lazy val privateKeyBytes: Array[Byte] = readFromFile(privateKeyFileName)
+  protected[this] lazy val publicKeyBytes: Array[Byte] = readFromFile(publicKeyFileName)
+  protected[this] lazy val privateKeyBytes: Array[Byte] = readFromFile(privateKeyFileName)
 }
 
 trait BytesReader {

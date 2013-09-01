@@ -8,12 +8,12 @@ import vk.scout.config.LoginPassword
 object LoginDialog extends Dialog {
   // http://stackoverflow.com/questions/7921182/scala-swing-newbie
   // http://alvinalexander.com/java/jwarehouse/scala/src/swing/scala/swing/test/UIDemo.scala.shtml
-  var optLoginPassword: Option[LoginPassword] = None
-  val loginField = new TextField(25)
-  val loginLabel = new Label("Номер телефона / E-mail:")
-  val passwordField = new PasswordField(25)
-  val passwordLabel = new Label("Пароль:")
-  val saveCheckbox = new CheckBox("Запомнить логин & пароль") {
+  private var optLoginPassword: Option[LoginPassword] = None
+  private val loginField = new TextField(25)
+  private val loginLabel = new Label("Номер телефона / E-mail:")
+  private val passwordField = new PasswordField(25)
+  private val passwordLabel = new Label("Пароль:")
+  private val saveCheckbox = new CheckBox("Запомнить логин & пароль") {
     selected = true
     focusPainted = false
   }
@@ -22,7 +22,7 @@ object LoginDialog extends Dialog {
   modal = true
   resizable = false
 
-  val mainControls = new BoxPanel(Orientation.Vertical) {
+  private val mainControls = new BoxPanel(Orientation.Vertical) {
     border = Swing.EmptyBorder(5, 5, 5, 5)
     contents += loginLabel
     contents += loginField
@@ -48,7 +48,7 @@ object LoginDialog extends Dialog {
       mainControls.visible = saveCheckbox.selected
       val sign = if (saveCheckbox.selected) 1 else -1
       size = new Dimension(size.width + sign * 20, size.height + sign * mainControls.size.height)
-    case _ : WindowClosing =>
+    case _: WindowClosing =>
       // When user closes with 'x', this event rises
       optLoginPassword = None
   }

@@ -53,7 +53,7 @@ abstract class WebBrowser extends JQueryWebView {
     })
   }
 
-  def loadURL(url: String) {
+  protected[this] def loadURL(url: String) {
     Platform.runLater(new Runnable {
       def run() {
         var tmp: String = toURL(url)
@@ -78,7 +78,7 @@ abstract class WebBrowser extends JQueryWebView {
 
   protected[this] def close() = frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING))
 
-  def notifyOnClose(lock: AnyRef) {
+  protected[this] def notifyOnClose(lock: AnyRef) {
     // inspired by http://stackoverflow.com/questions/1341699/how-do-i-make-a-thread-wait-for-jframe-to-close-in-java
     frame.addWindowListener(new WindowAdapter {
       override def windowClosing(arg0: WindowEvent) {

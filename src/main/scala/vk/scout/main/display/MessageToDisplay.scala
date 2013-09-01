@@ -7,16 +7,18 @@ import vk.scout.wrap.messages.MessagesMarkAsImportant
 import vk.scout.wrap.users.UsersGet
 import vk.scout.helpers._
 
-case class MessageToDisplay(msgVk: MessageFromVk, usersGetRequestForSender: UsersGet,
-                            markRead: MessagesMarkAsRead, markImportant: MessagesMarkAsImportant) {
-  val id = msgVk.id
+case class MessageToDisplay(msgVk: MessageFromVk) {
+  lazy val id = msgVk.id
   lazy val text: String = msgVk.bodyWithImg
-  val URL: String = "https://vk.com/im?sel=" + msgVk.userId
-  val authorId = msgVk.userId
-  private[this] lazy val cut = listExtractor[UserFromVk](usersGetRequestForSender.send(), Seq("response"))
-  lazy val author: String = cut.head.firstName + " " + cut.head.lastName
+  lazy val URL: String = "https://vk.com/im?sel=" + msgVk.userId
+  lazy val authorId = msgVk.userId
+  private[this] val usersGet = UsersGet(Set(msgVk.userId))
+  lazy val author: String = listExtractor[UserFromVk](usersGet.send(), Seq("response")) match {
+    case List(user) => user.firstName + " " + user.lastName
+    case _ => throw new IllegalArgumentException(usersGet.toString)
+  }
 
-  def run(command: => Unit) {
+  private[this] def run(command: => Unit) {
     new Thread(new Runnable {
       def run() {
         command
@@ -26,13 +28,13 @@ case class MessageToDisplay(msgVk: MessageFromVk, usersGetRequestForSender: User
 
   def markAsRead() {
     run {
-      markRead.send()
+      MessagesMarkAsRead(Set(msgVk.id), msgVk.userId).send()
     }
   }
 
   def markAsImportant() {
     run {
-      markImportant.send()
+      MessagesMarkAsImportant(Set(msgVk.id), important = true).send()
     }
   }
 }

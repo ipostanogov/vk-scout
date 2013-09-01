@@ -5,12 +5,12 @@ import java.awt.{Point, GraphicsEnvironment, Dimension}
 import vk.scout.helpers._
 
 class MessageDisplayActor extends Actor {
-  val defaultSize = new Dimension(200, 170)
-  val rect = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice.getDefaultConfiguration.getBounds
-  val xMax = rect.getMaxX - defaultSize.getWidth - 5
-  val yMax = rect.getMaxY - 50
-  val displayingMsgs = Array.fill(3)(None: Option[MessageWindow])
-  val waitingQueue = new collection.mutable.SynchronizedQueue[MessageWindow]
+  private[this] val defaultSize = new Dimension(200, 170)
+  private[this] val rect = GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice.getDefaultConfiguration.getBounds
+  private[this] val xMax = rect.getMaxX - defaultSize.getWidth - 5
+  private[this] val yMax = rect.getMaxY - 50
+  private[this] val displayingMsgs = Array.fill(3)(None: Option[MessageWindow])
+  private[this] val waitingQueue = new collection.mutable.SynchronizedQueue[MessageWindow]
 
   def act() {
     loop {
@@ -27,7 +27,7 @@ class MessageDisplayActor extends Actor {
     }
   }
 
-  def removeFromDisplaying(msgFrame: MessageWindow) {
+  private[this] def removeFromDisplaying(msgFrame: MessageWindow) {
     val itemWithIndex = displayingMsgs.zipWithIndex.filter(_._1 == Some(msgFrame))
     // If message has received multiple times. E.g. user clicked close when frame closes itself after timeout
     if (!itemWithIndex.isEmpty) {
@@ -41,7 +41,7 @@ class MessageDisplayActor extends Actor {
     }
   }
 
-  def displayMsgFrame(msgFrame: MessageWindow) {
+  private[this] def displayMsgFrame(msgFrame: MessageWindow) {
     val emptyIndex = displayingMsgs.zipWithIndex.filter(!_._1.isDefined).map(_._2).min
     displayingMsgs(emptyIndex) = Option(msgFrame)
     val loc = new Point(xMax.toInt, (yMax - (emptyIndex + 1) * (defaultSize.getHeight + 3) + 10).toInt)

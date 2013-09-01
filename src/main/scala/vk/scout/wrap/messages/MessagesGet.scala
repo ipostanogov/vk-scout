@@ -9,7 +9,7 @@ case class MessagesGet(out: Option[Int] = None,
                        filters: Set[MessageFilter] = Set(Unread),
                        previewLength: Option[Int] = Option(0),
                        lastMessageId: Option[Int] = None) extends ApiConnector {
-  final val methodName = "messages.get"
+  protected[this] final val methodName = "messages.get"
 
   def apiParamsMap: Map[String, Option[String]] = for ((k, v) <- apiIntParamsMap) yield (k, optIntToOptStr(v))
 

@@ -17,10 +17,10 @@ object TrayKeeper extends Actor {
         loop {
           react {
             case Status(text) => trayIcon.setToolTip(s"$appName ~ $text")
-            case n @ Notify(_,_,_) => trayIcon.displayMessage(n.caption, n.text, n.msgType)
+            case n : Notify => trayIcon.displayMessage(n.caption, n.text, n.msgType)
           }
         }
-      case _ =>
+      case None =>
     }
   }
 

@@ -3,43 +3,34 @@ package vk.scout.wrap
 import vk.scout.helpers._
 import scala.util.Random
 import vk.scout.Launcher
-import Launcher.Restart
-import vk.scout.Launcher
 
 trait ApiConnector extends URLConnector {
-  val samePart = "https://api.vk.com/method/"
-  val version = "5.0"
-  val rand = new Random()
+  private[this] val samePart = "https://api.vk.com/method/"
+  private[this] val version = "5.0"
+  private[this] val rand = new Random()
+  protected[this] val methodName: String
+  protected[this] def pageUrl = samePart + methodName
 
-  def pageUrl = samePart + methodName
-
-  val methodName: String
-
-  final def paramsMap: Map[String, Option[String]] =
+  final protected[this] def paramsMap: Map[String, Option[String]] =
     apiParamsMap +
       ("access_token" -> Launcher.accessToken, "v" -> Option(version))
 
-  def apiParamsMap: Map[String, Option[String]]
+  protected[this] def apiParamsMap: Map[String, Option[String]]
 
   override def send(): String = {
-    val trySend: String = super[URLConnector].send()
-    fieldExtractor[ErrorVk](trySend, Seq("error")) match {
+    val sendResult: String = super[URLConnector].send()
+    fieldExtractor[ErrorVk](sendResult, Seq("error")) match {
       case Some(error) =>
-        error.code match {
-          // Слишком частые запросы
-          case 6 => Thread.sleep(rand.nextInt(100) + 333)
-          // Ошибочный код авторизации
-          case 5 => Launcher ! Restart
+        error.meaning match {
+          case TooManyRequests => Thread.sleep(rand.nextInt(100) + 333)
+          case InvalidAccessToken => Launcher ! InvalidAccessToken
           // В любой непонятной ситуации ложись спать
-          case _ => Thread.sleep(5000)
+          case OtherErrorCode => Thread.sleep(5000)
         }
         send()
-      case _ => trySend
+      case None => sendResult
     }
   }
 
-  implicit def optIntToOptStr(optInt: Option[Int]) = optInt match {
-    case Some(value) => Option(value.toString)
-    case _ => None
-  }
+  implicit def optIntToOptStr(optInt: Option[Int]) = optInt.map(_.toString)
 }
