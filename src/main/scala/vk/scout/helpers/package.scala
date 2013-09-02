@@ -3,7 +3,7 @@ package vk.scout
 import argonaut._, Argonaut._
 
 package object helpers {
-  def listExtractor[T: DecodeJson](jsonStr: String, downFields: Seq[String]) = {
+  def listExtractor[T: DecodeJson](jsonStr: String, downFields: Seq[String]): List[T] = {
     // with help from gpampara @ http://pastebin.com/bgjnkPe3
     def decodeResultOfListToList(value: Option[DecodeResult[List[T]]]): List[T] =
       value.map(_.getOr(List.empty)) getOrElse List.empty
@@ -14,10 +14,14 @@ package object helpers {
       else
         curs.flatMap(x => deeper(x.downField(fields.head), fields.tail))
     }
-    jsonStr.parse.fold(sys.error, json => decodeResultOfListToList(deeper(Option(json.cursor), downFields)))
+    try
+      jsonStr.parse.fold(sys.error, json => decodeResultOfListToList(deeper(Option(json.cursor), downFields)))
+    catch {
+      case e: Throwable => List()
+    }
   }
 
-  def fieldExtractor[T: DecodeJson](jsonStr: String, downFields: Seq[String]) = {
+  def fieldExtractor[T: DecodeJson](jsonStr: String, downFields: Seq[String]): Option[T] = {
     def decodeResultOfTToOptionT(value: Option[DecodeResult[T]]): Option[T] =
       value.map(_.toOption) getOrElse None
 
@@ -27,7 +31,11 @@ package object helpers {
       else
         curs.flatMap(x => deeper(x.downField(fields.head), fields.tail))
     }
-    jsonStr.parse.fold(sys.error, json => decodeResultOfTToOptionT(deeper(Option(json.cursor), downFields)))
+    try
+      jsonStr.parse.fold(sys.error, json => decodeResultOfTToOptionT(deeper(Option(json.cursor), downFields)))
+    catch {
+      case e: Throwable => None
+    }
   }
 
   object Timer {
@@ -40,4 +48,5 @@ package object helpers {
       t.start()
     }
   }
+
 }
