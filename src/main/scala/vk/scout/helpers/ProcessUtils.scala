@@ -7,7 +7,7 @@ object ProcessUtils {
   private val startHeapSizeInMb = 15
   private val maxHeapSizeInMb = 100
   private val javaBin = {
-    val path = System.getProperty("java.home") + File.separator + "bin1" + File.separator + "java"
+    val path = "java"
     try {
       new ProcessBuilder(path).start()
       Some(path)
