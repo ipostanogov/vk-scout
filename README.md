@@ -5,7 +5,7 @@ vk-scout
 
 Возможности
 --------------
-* Всплывающие оповещения о новых сообщениях ВКонтакте
+* Всплывающие новые сообщениях ВКонтакте
 * При щелчке на оповещении [ЛКМ](http://ru.wikipedia.org/wiki/Щелчок_%28нажатие_клавиши%29#.D0.9B.D0.B5.D0.B2.D0.B0.D1.8F_.D0.BA.D0.BD.D0.BE.D0.BF.D0.BA.D0.B0) - переход к диалогу, при [ПКМ](http://ru.wikipedia.org/wiki/Щелчок_%28нажатие_клавиши%29#.D0.9F.D1.80.D0.B0.D0.B2.D0.B0.D1.8F_.D0.BA.D0.BD.D0.BE.D0.BF.D0.BA.D0.B0) - отметить прочитанным
 * Поддержка смайликов
 
@@ -66,6 +66,7 @@ vk-scout
 ------------------------
 * убедиться, что в пути java `System.getProperty(“user.home”)` все символы латинские;
 * скачать и установить [sbt](http://www.scala-sbt.org/0.12.2/docs/Getting-Started/Setup.html), [jdk](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html);
+* проверить, что переменная [JAVA_HOME](http://docs.oracle.com/cd/E19182-01/820-7851/inst_cli_jdk_javahome_t/index.html) указывает на папку с jdk
 * зайти в папку с исходниками из консоли;
 * выполнить последовательно sbt, update, assembly;
 * забрать результат в `\target\scala-2.10\vk-scout-assembly-*.jar`
@@ -79,3 +80,8 @@ vk-scout
 
 #### v0.1 
 * Первая публичная версия
+
+
+Благодарности
+-----------
+* Иконки - [http://ru.iconka.com/](http://ru.iconka.com/harry-potter-and-windows-xp/)
