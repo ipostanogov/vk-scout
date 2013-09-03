@@ -34,3 +34,5 @@ mainClass in (Compile, run)  := Some("vk.scout.Launcher")
 mainClass in (Compile, packageBin)  := Some("vk.scout.Launcher")
 
 mainClass in assembly     := Some("vk.scout.Launcher")
+
+scalacOptions += "-feature"

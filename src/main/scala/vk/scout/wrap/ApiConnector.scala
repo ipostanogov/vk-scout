@@ -3,6 +3,7 @@ package vk.scout.wrap
 import vk.scout.helpers._
 import scala.util.Random
 import vk.scout.Launcher
+import scala.language.implicitConversions
 
 trait ApiConnector extends URLConnector {
   private[this] val samePart = "https://api.vk.com/method/"
