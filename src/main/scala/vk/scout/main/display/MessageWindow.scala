@@ -53,25 +53,27 @@ class MessageWindow(val message: MessageToDisplay, msgDsplActor: Actor) {
       changeOpacity(hideTime, step, hideTime, inc = false, 0.8f, 1.0f)
     }
     Timer(appearTime + showTime + hideTime) {
-      close()
+      close(ClosedByTimeout(me))
     }
   }
 
-  def close() {
+  def close(event: OnMessageWindowHide) {
     if (window.isVisible) {
       window.setVisible(false)
-      msgDsplActor ! OnMessageWindowHide(me)
+      msgDsplActor ! event
     }
   }
 
   window.addMouseListener(new MouseAdapter {
     override def mouseClicked(e: MouseEvent) {
-      close()
-      if (SwingUtilities.isLeftMouseButton(e)) try {
-        Config.openInWebBrowser(message.URL)
-      }
-      catch {
-        case e: Exception => println(e)
+      close(ClosedByUser(me))
+      if (SwingUtilities.isLeftMouseButton(e)) {
+        try {
+          Config.openInWebBrowser(message.URL)
+        }
+        catch {
+          case e: Exception => println(e)
+        }
       }
       else if (SwingUtilities.isRightMouseButton(e)) message.markAsRead()
       // Not working
@@ -84,4 +86,6 @@ object MessageWindow {
   val font = new JTextArea().getFont
 }
 
-case class OnMessageWindowHide(window: MessageWindow)
+sealed trait OnMessageWindowHide
+case class ClosedByUser(window: MessageWindow) extends OnMessageWindowHide
+case class ClosedByTimeout(window: MessageWindow) extends OnMessageWindowHide
