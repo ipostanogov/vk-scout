@@ -2,9 +2,6 @@ package vk.scout.auth.oauth2.browser
 
 import javafx.beans.value.{ObservableValue, ChangeListener}
 import org.w3c.dom.Document
-import org.apache.http.client.utils.URLEncodedUtils
-import scala.collection.JavaConverters._
-import java.net.URI
 import argonaut._, Argonaut._
 import vk.scout.helpers.Timer
 import vk.scout.config.LoginPassword
@@ -48,23 +45,22 @@ class AuthBrowser extends WebBrowser {
     def changed(prop: ObservableValue[_ <: Document], oldDoc: Document, newDoc: Document) {
       if (newDoc == null) return
       loginPassword.map(lp =>
-      executejQuery(engine,
-        "(function(){" +
-          "$('input[name=email]').val('" + lp.login + "');" +
-          "$('input[name=pass]').val('" + lp.password + "');" +
-          "$('input[type=submit]').click();" +
-          "})();"))
+        executejQuery(engine,
+          "(function(){" +
+            "$('input[name=email]').val('" + lp.login + "');" +
+            "$('input[name=pass]').val('" + lp.password + "');" +
+            "$('input[type=submit]').click();" +
+            "})();"))
     }
   }
 
   private[this] val retrieveAccessToken: ChangeListener[Document] = new ChangeListener[Document] {
     def jsonFromUrl(doc: Document) = {
       // vk returns link like http://REDIRECT_URI#access_token= 533..6506a3&expires_in=86400&user_id=8492
-      // parsing it with URLEncodedUtils fails
-      val docURI = doc.getDocumentURI.replace("#", "?").replace(" ", "+")
-      val urlParams = URLEncodedUtils.parse(new URI(docURI), "UTF-8").asScala.map(x => (x.getName, x.getValue)).toMap
-      // https://github.com/argonaut-io/argonaut/blob/master/src/test/scala/argonaut/JsonParserSpecification.scala
-      (for ((key, value) <- urlParams) yield key := value).foldRight(jEmptyObject)(_ ->: _)
+      doc.getDocumentURI.dropWhile(_ != '#').drop(1).split("&").map(str => {
+        val kvp = str.split("=")
+        kvp(0) := kvp(1)
+      }).toMap.foldRight(jEmptyObject)(_ ->: _)
     }
 
     def changed(prop: ObservableValue[_ <: Document], oldDoc: Document, newDoc: Document) {

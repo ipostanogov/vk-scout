@@ -7,11 +7,6 @@
     <artifactId>vk-scout</artifactId>
     <dependencies>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>[4.3-beta2,)</version>
-        </dependency>
-        <dependency>
             <groupId>io.argonaut</groupId>
             <artifactId>argonaut_2.10</artifactId>
             <version>[6.1-M1,)</version>

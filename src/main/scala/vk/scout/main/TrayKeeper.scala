@@ -4,7 +4,7 @@ import scala.actors.Actor
 import java.awt._
 import javax.imageio.ImageIO
 import java.io.ByteArrayInputStream
-import org.apache.commons.codec.binary.Base64
+import sun.misc.BASE64Decoder
 import java.awt.event._
 import java.awt.TrayIcon.MessageType
 import javax.swing.SwingUtilities
@@ -72,7 +72,7 @@ object TrayKeeper extends Actor {
 
   }
 
-  def base64ToImage(base64 : String) = ImageIO.read(new ByteArrayInputStream(Base64.decodeBase64(base64.getBytes)))
+  def base64ToImage(imgInBase64 : String) = ImageIO.read(new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(imgInBase64)))
 }
 
 case class SetMouseLeftClickOnTrayReceiver(receiver: Actor)
