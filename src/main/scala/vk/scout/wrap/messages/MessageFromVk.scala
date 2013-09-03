@@ -2,7 +2,7 @@ package vk.scout.wrap.messages
 
 import argonaut._, Argonaut._
 
-case class MessageFromVk(id: Int, date: Int, userId: Int, body: String, emoji: Option[Int]) {
+case class MessageFromVk(id: Int, date: Int, userId: Int, body: String, emoji: Option[Int], chatId: Option[Int], title: String) {
   lazy val bodyWithImg =
     if (body.isEmpty)
       "<html><img src='http://savepic.su/3143652.png'></html>"
@@ -29,5 +29,5 @@ object MessageFromVk {
   }
 
   implicit def MessageCodecJson: CodecJson[MessageFromVk] =
-    casecodec5(MessageFromVk.apply, MessageFromVk.unapply)("id", "date", "user_id", "body", "emoji")
+    casecodec7(MessageFromVk.apply, MessageFromVk.unapply)("id", "date", "user_id", "body", "emoji", "chat_id", "title")
 }

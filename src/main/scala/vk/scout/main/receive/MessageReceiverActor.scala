@@ -17,7 +17,7 @@ class MessageReceiverActor(val msgDsplActor: Actor) extends Actor {
       displayedMsgs += msgVk.id
       msgDsplActor ! ShowMessage(MessageToDisplay(msgVk))
     }
-    sendToDisplay(MessageFromVk(0, 0, 1, "Авторизация прошла успешно", None))
+    sendToDisplay(MessageFromVk(0, 0, 1, "Авторизация прошла успешно", None, None, ""))
     this ! Check
     loop {
       react {
