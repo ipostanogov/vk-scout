@@ -18,13 +18,13 @@ trait URLBuilder {
 }
 
 trait URLConnector extends URLBuilder {
-  def send() : String = {
+  def send(): String = {
     val connection = new URL(getUrl).openConnection
     try {
-    Source.fromInputStream(connection.getInputStream, "utf8").getLines().mkString("")
+      Source.fromInputStream(connection.getInputStream, "utf8").getLines().mkString("")
     }
     catch {
-      case _ : SocketException | _ : UnknownHostException => Thread.sleep(1000); send()
+      case _: SocketException | _: UnknownHostException => Thread.sleep(1000); send()
     }
   }
 }

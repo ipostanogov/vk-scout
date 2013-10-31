@@ -6,6 +6,8 @@ case class ErrorVk(code: Int, message: String) {
   val meaning = code match {
     case 5 => InvalidAccessToken
     case 6 => TooManyRequests
+    case 15 => UserDeactivated
+    case 113 => InvalidUserId
     case _ : Int => OtherErrorCode
   }
 }
@@ -16,6 +18,8 @@ object ErrorVk {
 }
 
 sealed trait ErrorCodeMeaning
-object TooManyRequests extends ErrorCodeMeaning
 object InvalidAccessToken extends ErrorCodeMeaning
+object InvalidUserId extends ErrorCodeMeaning
 object OtherErrorCode extends ErrorCodeMeaning
+object TooManyRequests extends ErrorCodeMeaning
+object UserDeactivated extends ErrorCodeMeaning

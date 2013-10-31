@@ -4,9 +4,10 @@ import vk.scout.helpers._
 import scala.util.Random
 import vk.scout.Launcher
 import scala.language.implicitConversions
+import vk.scout.wrap.users.UsersGet
 
 trait ApiConnector extends URLConnector {
-  private[this] val samePart = "https://api.vk.com/method/"
+  private[this] val samePart = "http://api.vk.com/method/"
   private[this] val version = "5.0"
   private[this] val rand = new Random()
   protected[this] val methodName: String
@@ -14,7 +15,7 @@ trait ApiConnector extends URLConnector {
 
   final protected[this] def paramsMap: Map[String, Option[String]] =
     apiParamsMap +
-      ("access_token" -> Launcher.accessToken, "v" -> Option(version))
+      (/*"access_token" -> Launcher.accessToken, */"v" -> Option(version))
 
   protected[this] def apiParamsMap: Map[String, Option[String]]
 
@@ -23,12 +24,20 @@ trait ApiConnector extends URLConnector {
     fieldExtractor[ErrorVk](sendResult, Seq("error")) match {
       case Some(error) =>
         error.meaning match {
-          case TooManyRequests => Thread.sleep(rand.nextInt(100) + 333)
-          case InvalidAccessToken => Launcher ! InvalidAccessToken
+          case TooManyRequests =>
+            Thread.sleep(rand.nextInt(100) + 333)
+            send()
+          case InvalidAccessToken =>
+            Launcher ! InvalidAccessToken
+            throw new IllegalArgumentException
+          case InvalidUserId | UserDeactivated =>
+            println("Неверный id пользователя")
+            UsersGet(userIntIds = Set(1)).send()
           // В любой непонятной ситуации ложись спать
-          case OtherErrorCode => Thread.sleep(5000)
+          case OtherErrorCode =>
+            Thread.sleep(5000)
+            send()
         }
-        send()
       case None => sendResult
     }
   }
