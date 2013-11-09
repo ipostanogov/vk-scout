@@ -3,7 +3,7 @@ package vk.scout.wrap.wall
 import vk.scout.wrap.ApiConnector
 import vk.scout.helpers._
 
-case class WallGet(ownerId: Int, count: Int = 1000, offset: Int = 0) extends ApiConnector {
+case class WallGet(ownerId: Int, count: Int = 98, offset: Int = 0) extends ApiConnector {
   protected[this] final val methodName = "wall.get"
 
   protected[this] def apiParamsMap: Map[String, Option[String]] = Map(

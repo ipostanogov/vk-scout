@@ -13,6 +13,7 @@ import vk.scout.main.{Status, TrayKeeper}
 import vk.scout.main.receive.MessageReceiverActor
 import vk.scout.main.display.MessageDisplayActor
 import vk.scout.wrap.InvalidAccessToken
+import vk.spy.MessageStat
 
 object Launcher extends App with Actor {
   val URL = new RequestData("3819747").getUrl
@@ -50,11 +51,12 @@ object Launcher extends App with Actor {
   def act() {
     accessToken match {
       case Some(_) =>
-        val msgDsplActor = new MessageDisplayActor
-        val msgRcvrActor = new MessageReceiverActor(msgDsplActor)
-        msgDsplActor.start()
-        msgRcvrActor.start()
-        TrayKeeper ! Status("подключён")
+//        val msgDsplActor = new MessageDisplayActor
+//        val msgRcvrActor = new MessageReceiverActor(msgDsplActor)
+//        msgDsplActor.start()
+//        msgRcvrActor.start()
+//        TrayKeeper ! Status("подключён")
+        MessageStat.main(Array.empty)
       case None =>
         this ! InvalidAccessToken
     }

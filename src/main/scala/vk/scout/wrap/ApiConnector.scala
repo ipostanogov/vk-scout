@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 import vk.scout.wrap.users.UsersGet
 
 trait ApiConnector extends URLConnector {
-  private[this] val samePart = "http://api.vk.com/method/"
+  private[this] val samePart = "https://api.vk.com/method/"
   private[this] val version = "5.0"
   private[this] val rand = new Random()
   protected[this] val methodName: String
@@ -15,7 +15,7 @@ trait ApiConnector extends URLConnector {
 
   final protected[this] def paramsMap: Map[String, Option[String]] =
     apiParamsMap +
-      (/*"access_token" -> Launcher.accessToken, */"v" -> Option(version))
+      ("access_token" -> Launcher.accessToken, "v" -> Option(version))
 
   protected[this] def apiParamsMap: Map[String, Option[String]]
 

@@ -6,7 +6,7 @@ name := "vk-scout"
 
 version := "0.1.2"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 javaHome := {
   var s = System.getenv("JAVA_HOME")

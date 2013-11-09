@@ -1,10 +1,13 @@
 package vk.spy
 
-import vk.scout.wrap.users.UserFromVk
 import scala.swing._
 import scala.swing.event.ButtonClicked
-import javax.swing.UIManager
+import javax.swing.{JFileChooser, UIManager}
 import BorderPanel.Position._
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.{FileOutputStream, File}
+import scala.util.Random
+import vk.scout.wrap.users.UserFromVk
 
 object MessageStat extends SimpleSwingApplication {
   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName)
@@ -23,23 +26,41 @@ object MessageStat extends SimpleSwingApplication {
     listenTo(btSubmit)
     reactions += {
       case ButtonClicked(`btSubmit`) =>
-        showPostsOnUserWall(UserFromVk.fromId(idField.text))
+        showPostsOnUserWall(idField.text.split(",").map(UserFromVk.fromId))
     }
     layout(btSubmit) = South
     layout(idField) = Center
     layout(new Label(" id Пользователя ")) = West
   }
 
-  def showPostsOnUserWall(user: UserFromVk) {
-    new SimpleSwingApplication {
-      def top = new MainFrame {
-        title = "Сообщения. " + user.firstName + " " + user.lastName
-        val headers = Seq("Имя", "Фамилия", "Дата", "Текст")
-        val rowData = user.postsOnWall.map(post => Array(post.author.firstName, post.author.lastName, post.normDate.toString, post.text).asInstanceOf[Array[Any]]).toArray
-        contents = new ScrollPane(new Table(rowData, headers))
+  def showPostsOnUserWall(users: Seq[UserFromVk]) {
+    val workbook = new XSSFWorkbook()
+    users.foreach(user => {
+      val sheet = workbook.createSheet(user.firstName + " " + user.lastName + " (" + user.id + ")")
+      val row = sheet.createRow(0)
+      for ((header, num) <- Seq("Имя", "Фамилия", "id Автора", "Дата", "Текст").zipWithIndex)
+        row.createCell(num).setCellValue(header)
+      for ((post, num) <- user.postsOnWall.zipWithIndex) {
+        val row = sheet.createRow(num + 1)
+        row.createCell(0).setCellValue(post.author.firstName)
+        row.createCell(1).setCellValue(post.author.lastName)
+        row.createCell(2).setCellValue(post.authorId)
+        row.createCell(3).setCellValue(post.normDate)
+        row.createCell(4).setCellValue(post.text)
       }
-    }.main(Array())
+    })
+    try {
+      val fc = new JFileChooser()
+      fc.setSelectedFile(new File(System.getenv("user.home") + File.separator + Random.nextDouble + ".xlsx"))
+      if (fc.showSaveDialog(this.top.peer) == JFileChooser.APPROVE_OPTION) {
+        val out = new FileOutputStream(fc.getSelectedFile)
+        workbook.write(out)
+        out.close()
+      }
+    }
+    catch {
+      case e: Exception => e.printStackTrace()
+    }
+    System.exit(0)
   }
 }
-
-

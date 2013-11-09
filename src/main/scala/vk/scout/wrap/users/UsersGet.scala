@@ -15,4 +15,18 @@ case class UsersGet(userIntIds: Set[Int] = Set(),
     "fields" -> Option(fields.map(_.value).mkString(",")),
     "name_case" -> Option(nameCase.value)
   )
+
+  override def send() = {
+    if (UsersGet.cache.isDefinedAt(this))
+      UsersGet.cache(this)
+    else {
+      val rez = super.send()
+      UsersGet.cache(this) = rez
+      rez
+    }
+  }
+}
+
+object UsersGet {
+  val cache = collection.mutable.Map[UsersGet, String]()
 }
