@@ -13,11 +13,11 @@ import vk.scout.main.{Status, TrayKeeper}
 import vk.scout.main.receive.MessageReceiverActor
 import vk.scout.main.display.MessageDisplayActor
 import vk.scout.wrap.InvalidAccessToken
-import vk.spy.MessageStat
+import vk.spy.{FriendsStat, MessageStat}
 
 object Launcher extends App with Actor {
   val URL = new RequestData("3819747").getUrl
-  ProcessUtils.RestartIfHeapSizeNeedsReducing()
+//  ProcessUtils.RestartIfHeapSizeNeedsReducing()
   MagicHeapCleaner.run()
 
   TrayKeeper.start()
@@ -31,7 +31,7 @@ object Launcher extends App with Actor {
   private def auth(optLoginPassword: Option[LoginPassword]): Option[AuthResponse] = {
     optLoginPassword match {
       case optLP@Some(_) =>
-        new AuthBrowser().auth(optLP, displayForever = false) match {
+        new AuthBrowser().auth(optLP, displayForever = true) match {
           case authResult@Some(_) => authResult
           case None => auth(None)
         }
@@ -56,7 +56,7 @@ object Launcher extends App with Actor {
 //        msgDsplActor.start()
 //        msgRcvrActor.start()
 //        TrayKeeper ! Status("подключён")
-        MessageStat.main(Array.empty)
+        FriendsStat.main(Array.empty)
       case None =>
         this ! InvalidAccessToken
     }

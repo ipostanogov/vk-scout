@@ -21,4 +21,13 @@ object FriendsGet {
   }
 
   def getAll(id: String, depth: Int): Map[UserFromVk, Int] = getAll(UserFromVk.fromId(id), depth)
+
+  def merge(data: Seq[Map[UserFromVk, Int]]) = data.reduceLeft(
+    (rezMap: Map[UserFromVk, Int], otherMap: Map[UserFromVk, Int]) => {
+      var tmp: Map[UserFromVk, Int] = rezMap
+      otherMap.foreach {
+        case (k, v) => tmp = tmp.updated(k, tmp(k) + v)
+      }
+      tmp
+    })
 }
